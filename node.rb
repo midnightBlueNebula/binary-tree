@@ -64,9 +64,3 @@ class Node
     end
   end
 end
-
-
-a = Node.new
-a.build_tree([1,2,3,4,5,6,7,8,9,10,11,12,13])
-a=a.left
-a=a.left
