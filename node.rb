@@ -60,7 +60,7 @@ class Node
       root.right = build_tree(nil,false,root.right)
       return root
     elsif root.nil? == false && $roots[root] == nil
-      return root
+      return Node.new(root,nil,nil) #return root
     end
   end
 end
