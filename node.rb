@@ -16,7 +16,7 @@ class Node
       min_root = num if num != nil
       #p num
     end
-    p "min_root: #{min_root}"
+    #p "min_root: #{min_root}"
     if min_root != arr[0]
       $roots[min_root] = [arr[0],nil] 
       min_root = $roots[min_root]
