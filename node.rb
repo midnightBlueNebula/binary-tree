@@ -14,15 +14,15 @@ class Node
       num = $roots[num] if num != nil
       num = num[0] if num != nil
       min_root = num if num != nil
-      p num
+      #p num
     end
     p "min_root: #{min_root}"
     if min_root != arr[0]
       $roots[min_root] = [arr[0],nil] 
       min_root = $roots[min_root]
       min_root = min_root[0]
-      p "new min_root: #{min_root}"
-      p $roots
+      #p "new min_root: #{min_root}"
+      #p $roots
     end
   end
 
@@ -55,7 +55,7 @@ class Node
     end
     if root.nil? == false && $roots[root] != nil
       root = Node.new(root,$roots[root][0],$roots[root][1])
-      p root
+      #p root
       root.left = build_tree(nil,false,root.left)
       root.right = build_tree(nil,false,root.right)
       return root
