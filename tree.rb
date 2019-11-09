@@ -17,6 +17,56 @@ class Tree
         current = @root
         while current.nil? == false
             return if data == current.root
+            if data < current.root
+                if current.left.nil?
+                    current.left = Node.new(data,nil,nil)
+                    break
+                else
+                    left = current.left
+                    if data < left.root
+                        if left.left
+                            current = left.left
+                        else
+                            left.left = Node.new(data,nil,nil)
+                            break
+                        end
+                    elsif data > left.root
+                        if left.right
+                            current = left.right
+                        else
+                            left.right = Node.new(data,nil,nil)
+                            break
+                        end
+                    else
+                        p "Value #{data} already exist in tree."
+                        break
+                    end
+                end 
+            else
+                if current.right.nil?
+                    current.right = Node.new(data,nil,nil)
+                else
+                    right = current.right
+                    if data < right.root
+                        if right.left
+                            current = right.left
+                        else
+                            right.left = Node.new(data,nil,nil)
+                            break    
+                        end
+                    elsif data > right.root
+                        if right.right
+                            current = right.right
+                        else
+                            right.right = Node.new(data,nil,nil)
+                            break  
+                        end
+                    else
+                        p "Value #{data} already exist in tree."
+                        break
+                    end
+                end
+            end
         end
     end
 
