@@ -7,8 +7,44 @@ class Tree
         if arr.kind_of?(Array)
             data = Node.new
             @root = data.build_tree(arr)
+            @roots = []
         else
             p "Error: Expected array argument instead of #{arr}."
+        end
+    end
+
+    private
+
+    def branch_template(roots=@root)
+        return if roots == []
+        row = []
+        next_roots=[]
+        roots.each do |r|
+          if r.kind_of?(Numeric)
+             row << r.to_s
+          elsif r
+            row << r.root.to_s
+            next_roots << r.left
+            next_roots << r.right
+          elsif r.nil?
+            row << "" 
+          end
+        end
+        @roots << row if row != []
+        branch_template(next_roots)
+    end
+
+    public
+
+    def print_tree(roots=@root)
+        branch_template([roots])
+        @roots.each do |arr|
+            arr.each do |n|
+              print n + " "
+            end
+            p ""
+            print "/\\ " * arr.length
+            p "" 
         end
     end
 
@@ -92,3 +128,4 @@ end
 a = Tree.new([4,2,5,6,334,53,7,447,86,24,64,6824,114,35,57,86,666,13,11,14])
 found = a.find(114)
 p found
+a.print_tree
