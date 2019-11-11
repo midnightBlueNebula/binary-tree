@@ -46,20 +46,20 @@ class Node
       root = arr[arr.length/2]
       find_roots(arr)
       complete_roots(root,arr)
-      self.root = root
-      self.left = build_tree(nil,false,$roots[root][0])
-      self.right = build_tree(nil,false,$roots[root][1])
+      #self.root = root
+      #self.left = build_tree(nil,false,$roots[root][0])
+      #self.right = build_tree(nil,false,$roots[root][1])
     elsif arr.kind_of?(Array) == false && first_call
       p "Error: Argument should be an Array"
       return
     end
-    if root.nil? == false && $roots[root] != nil
+    if root.nil? == false && $roots[root] != nil 
       root = Node.new(root,$roots[root][0],$roots[root][1])
       #p root
       root.left = build_tree(nil,false,root.left)
       root.right = build_tree(nil,false,root.right)
       return root
-    elsif root.nil? == false && $roots[root] == nil
+    elsif root.nil? == false && $roots[root] == nil 
       return Node.new(root,nil,nil) #return root
     end
   end
