@@ -16,6 +16,9 @@ class Tree
 
     private
 
+    def tree_reset
+    end
+
     def branch_template(roots=@root)
         return if roots == []
         row = []
@@ -66,7 +69,7 @@ class Tree
             if data < current.root
                 if current.left.nil?
                     current.left = Node.new(data,nil,nil)
-                    break
+                    return
                 else
                     left = current.left
                     if data < left.root
@@ -74,23 +77,24 @@ class Tree
                             current = left.left
                         else
                             left.left = Node.new(data,nil,nil)
-                            break
+                            return
                         end
                     elsif data > left.root
                         if left.right
                             current = left.right
                         else
                             left.right = Node.new(data,nil,nil)
-                            break
+                            return
                         end
                     else
                         p "Value #{data} already exist in tree."
-                        break
+                        return
                     end
                 end 
             else
                 if current.right.nil?
                     current.right = Node.new(data,nil,nil)
+                    return
                 else
                     right = current.right
                     if data < right.root
@@ -98,18 +102,18 @@ class Tree
                             current = right.left
                         else
                             right.left = Node.new(data,nil,nil)
-                            break    
+                            return    
                         end
                     elsif data > right.root
                         if right.right
                             current = right.right
                         else
                             right.right = Node.new(data,nil,nil)
-                            break  
+                            return  
                         end
                     else
                         p "Value #{data} already exist in tree."
-                        break
+                        return
                     end
                 end
             end
@@ -117,6 +121,62 @@ class Tree
     end
 
     def delete(data)
+      return if data.kind_of?(Numeric) == false
+      current = @root
+      while current.nil? == false
+        if data == current.root
+          if current.right == nil && current.left == nil
+            current.root = nil
+            return  
+          elsif current.left == nil
+            current = current.right
+            return
+          elsif current.right == nil
+            current = current.left
+            return
+          else 
+            right = current.right
+            current.root = right.root
+            current = current.right
+            while current.nil? == false
+              if current.right == nil && current.left == nil
+                current.root = nil
+                return
+              elsif current.left == nil
+                right = current.right 
+                current.root = right.root
+                current = current.right
+                next
+              elsif current.right == nil
+                left = current.left
+                current.root = left.root
+                current = current.left
+                next
+              else
+                right = current.right
+                current.root = right.root
+                current = current.right 
+              end
+            end    
+          end
+        elsif data < current.root
+          if current.left
+            current = current.left 
+          else
+            p "Value #{data} already doesn't exist"
+            return 
+          end 
+        elsif data > current.root
+          if current.right
+            current = current.right
+          else
+            p "Value #{data} already doesn't exist"
+            return
+          end
+        end 
+      end
+      p "Value #{data} already doesn't exist"
+      return  
     end
 
     def find(data)
@@ -140,4 +200,7 @@ a.insert(65)
 a.insert(85)
 found = a.find(80)
 p found
+a.print_tree 
+a.delete(60)
+a.delete(160)
 a.print_tree
