@@ -49,7 +49,7 @@ class Tree
                 if j == 0
                     print " " * (@roots.length-i) + n + " "
                 else
-                    print n + " "
+                    print n == "" ? "x " : n + " "
                 end
                 j += 1
             end
@@ -66,6 +66,10 @@ class Tree
         current = @root
         while current.nil? == false
             return if data == current.root
+            if current.root == nil 
+              current.root = data
+              return
+            end
             if data < current.root
                 if current.left.nil?
                     current.left = Node.new(data,nil,nil)
@@ -120,44 +124,52 @@ class Tree
         end
     end
 
-    def delete(data)
+    def delete(data,first_call=true,i=0)
       return if data.kind_of?(Numeric) == false
       current = @root
-      while current.nil? == false
+      while current.nil? == false && current.root != nil
         if data == current.root
+          if first_call == false && i == 0
+            i += 1
+            next
+          end
           if current.right == nil && current.left == nil
-            current.root = nil
-            return  
-          elsif current.left == nil
+            current = nil   
+          elsif current.left == nil 
             current = current.right
-            return
           elsif current.right == nil
-            current = current.left
-            return
+           current = current.left
           else 
-            right = current.right
-            current.root = right.root
-            current = current.right
-            while current.nil? == false
-              if current.right == nil && current.left == nil
-                current.root = nil
-                return
-              elsif current.left == nil
-                right = current.right 
-                current.root = right.root
-                current = current.right
-                next
-              elsif current.right == nil
-                left = current.left
-                current.root = left.root
-                current = current.left
-                next
-              else
-                right = current.right
-                current.root = right.root
-                current = current.right 
+            replace_with = current.left
+            left =  current.left
+            min_diff = current.root-replace_with.root
+            while left != nil 
+              left = left.right
+              break if left == nil 
+              if current.root - left.root < min_diff
+                replace_with = left 
+                min_diff = current.root - left.root
               end
-            end    
+            end
+            current.root = replace_with.root
+            if replace_with.left == nil && replace_with.right == nil
+              replace_with.root = nil 
+              return  
+            elsif replace_with.left == nil
+	      replaced = replace_with.right
+              replace_with.root = replaced.root
+	      replace_with.left = replaced.left
+	      replace_with.right = replaced.right
+              return 
+            elsif replace_with.right == nil
+              replaced = replace_with.left
+              replace_with.root = replaced.root
+	      replace_with.left = replaced.left
+	      replace_with.right = replaced.right
+              return 
+            else 
+              delete(replace_with.root,false)
+            end 
           end
         elsif data < current.root
           if current.left
@@ -182,7 +194,7 @@ class Tree
     def find(data)
         return if data.kind_of?(Numeric) == false
         current = @root
-        while current.nil? == false 
+        while current.nil? == false && current.root != nil
             return current if data == current.root
             if data < current.root
                 current = current.left 
@@ -201,6 +213,6 @@ a.insert(85)
 found = a.find(80)
 p found
 a.print_tree 
+
 a.delete(60)
-a.delete(160)
 a.print_tree
