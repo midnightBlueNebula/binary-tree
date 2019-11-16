@@ -134,11 +134,17 @@ class Tree
             next
           end
           if current.right == nil && current.left == nil
-            current = nil   
-          elsif current.left == nil 
-            current = current.right
+            current.root = nil   
+          elsif current.left == nil
+            right = current.right 
+            current.root = right.root 
+            current.right = right.right 
+            current.left = right.left
           elsif current.right == nil
-           current = current.left
+            left = current.left
+            current.root = left.root
+            current.left = left.left 
+            current.right = left.right
           else 
             replace_with = current.left
             left =  current.left
