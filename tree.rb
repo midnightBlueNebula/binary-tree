@@ -19,7 +19,8 @@ class Tree
     def tree_reset
     end
 
-    def branch_template(roots=@root)
+    def branch_template(roots=@root,first_call=true)
+        @roots = [] if first_call
         return if roots == []
         row = []
         next_roots=[]
@@ -35,13 +36,13 @@ class Tree
           end
         end
         @roots << row if row != []
-        branch_template(next_roots)
+        branch_template(next_roots,false)
     end
 
     public
 
     def print_tree(roots=@root)
-        branch_template([roots])
+        branch_template([roots]) 
         i = 0
         @roots.each do |arr|
             j = 0
@@ -130,6 +131,7 @@ class Tree
       while current.nil? == false && current.root != nil
         if data == current.root
           if first_call == false && i == 0
+            current = current.left
             i += 1
             next
           end
@@ -151,27 +153,27 @@ class Tree
             min_diff = current.root-replace_with.root
             while left != nil 
               left = left.right
-              break if left == nil 
+              break if left.nil? || left.root == nil 
               if current.root - left.root < min_diff
                 replace_with = left 
                 min_diff = current.root - left.root
               end
             end
             current.root = replace_with.root
-            if replace_with.left == nil && replace_with.right == nil
+            if replace_with.left == nil &&                replace_with.right == nil
               replace_with.root = nil 
               return  
             elsif replace_with.left == nil
-	      replaced = replace_with.right
+	            replaced = replace_with.right
               replace_with.root = replaced.root
-	      replace_with.left = replaced.left
-	      replace_with.right = replaced.right
+	            replace_with.left = replaced.left
+	            replace_with.right = replaced.right
               return 
             elsif replace_with.right == nil
               replaced = replace_with.left
               replace_with.root = replaced.root
-	      replace_with.left = replaced.left
-	      replace_with.right = replaced.right
+	            replace_with.left = replaced.left
+	            replace_with.right = replaced.right
               return 
             else 
               delete(replace_with.root,false)
@@ -181,19 +183,16 @@ class Tree
           if current.left
             current = current.left 
           else
-            p "Value #{data} already doesn't exist"
             return 
           end 
         elsif data > current.root
           if current.right
             current = current.right
           else
-            p "Value #{data} already doesn't exist"
             return
           end
         end 
       end
-      p "Value #{data} already doesn't exist"
       return  
     end
 
@@ -211,9 +210,29 @@ class Tree
         p "Value #{data} doesn't exist in binary tree."
         return nil
     end
+
+    def level_order
+      branch_template([@root])
+      if block_given?
+        @roots.each do |arr|
+          arr.each do |data|
+            yield(data.to_i) if data != nil && data != "" && data != "x"
+          end
+        end
+      else
+        res = []
+        @roots.each do |arr|
+          arr.each do |data|
+            res << data.to_i if data != nil && data != "" && data != "x"
+          end
+        end
+        return res 
+      end
+    end
 end
 
 a = Tree.new([0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250])
+
 a.insert(65)
 a.insert(85)
 found = a.find(80)
@@ -222,3 +241,11 @@ a.print_tree
 
 a.delete(60)
 a.print_tree
+
+a.delete(50)
+a.print_tree
+
+a.delete(40)
+a.print_tree
+
+a.level_order { |e| p e*10 }
