@@ -229,9 +229,228 @@ class Tree
         return res 
       end
     end
+
+    def inorder
+      nodes = []
+      current = @root.left
+      roots = []
+      while current != nil
+        nodes.unshift(current)
+        current = current.left  
+      end
+      i = 0
+      nodes.each do |node|
+        if node.nil? || node.root == nil
+          i += 1
+          next
+        elsif node.left == nil && node.right == nil
+          roots << node.root if roots.include?(node.root) == false
+          i += 1
+          next
+        elsif node.left != nil && node.right == nil
+          left = node.left
+          if left.root
+            roots << left.root  if roots.include?(left.root) == false
+          end
+          roots << node.root if roots.include?(node.root) == false
+          i += 1
+          next
+        elsif node.right != nil && node.left == nil
+          right = node.right
+          if right.root
+            roots << node.root if roots.include?(node.root) == false 
+            roots << right.root if roots.include?(right.root) == false
+          end
+          roots << node.root if roots.include?(node.root) == false
+          i += 1
+          next
+        end
+        left = node.left 
+        roots << left.root if left.root && roots.include?(left.root) == false
+        roots << node.root if roots.include?(node.root) == false
+        right = node.right
+        if right.left == nil && right.right == nil
+          roots << right.root if roots.include?(right.root) == false
+          i += 1
+        elsif right.left == nil
+          roots << right.root if roots.include?(right.root) == false
+          current = right.right
+          temp_nodes = []
+          while current != nil
+            temp_nodes.unshift(current.right) if current.right
+            temp_nodes.unshift(current)
+            temp_nodes.unshift(current.left) if current.left 
+            current = current.left
+          end
+          temp_nodes.each do |t|
+            i += 1
+            nodes.insert(i,t)
+          end
+        elsif right.right == nil
+          current = right.left
+          temp_nodes = [Node.new(right.root,nil,nil)]
+          while current != nil
+            temp_nodes.unshift(current.right) if current.right
+            temp_nodes.unshift(current)
+            temp_nodes.unshift(current.left) if current.left 
+            current = current.left
+          end
+          temp_nodes.each do |t|
+            i += 1
+            nodes.insert(i,t)
+          end  
+        else
+          current = right.left
+          temp_nodes = [Node.new(right.root,nil,nil)]
+          while current != nil
+            temp_nodes.unshift(current.right) if current.right
+            temp_nodes.unshift(current)
+            temp_nodes.unshift(current.left) if current.left 
+            current = current.left
+          end
+          temp_nodes.each do |t|
+            i += 1
+            nodes.insert(i,t)
+          end
+          current = right.right
+          temp_nodes = []
+          while current != nil
+            temp_nodes.unshift(current.right) if current.right
+            temp_nodes.unshift(current)
+            temp_nodes.unshift(current.left) if current.left 
+            current = current.left
+          end
+          temp_nodes.each do |t|
+            i += 1
+            nodes.insert(i,t)
+          end
+        end
+      end
+      #---------***right branch***----------#
+      right_nodes = []
+      current = @root.right
+      right_roots = [@root.root]
+      while current != nil
+        right_nodes.unshift(current)
+        current = current.left  
+      end
+      i = 0
+      right_nodes.each do |node|
+        if node.nil? || node.root == nil
+          i += 1
+          next
+        elsif node.left == nil && node.right == nil
+          right_roots << node.root if right_roots.include?(node.root) == false
+          i += 1
+          next
+        elsif node.left != nil && node.right == nil
+          left = node.left
+          if left.root
+            right_roots << left.root  if right_roots.include?(left.root) == false
+          end
+          right_roots << node.root if right_roots.include?(node.root) == false
+          i += 1
+          next
+        elsif node.right != nil && node.left == nil
+          right = node.right
+          if right.root
+            right_roots << node.root if right_roots.include?(node.root) == false 
+            right_roots << right.root if right_roots.include?(right.root) == false
+          end
+          right_roots << node.root if right_roots.include?(node.root) == false
+          i += 1
+          next
+        end
+        left = node.left 
+        right_roots << left.root if left.root && right_roots.include?(left.root) == false
+        right_roots << node.root if right_roots.include?(node.root) == false
+        right = node.right
+        if right.left == nil && right.right == nil
+          right_roots << right.root if right_roots.include?(right.root) == false
+          i += 1
+        elsif right.left == nil
+          right_roots << right.root if right_roots.include?(right.root) == false
+          current = right.right
+          temp_right_nodes = []
+          while current != nil
+            temp_right_nodes.unshift(current.right) if current.right
+            temp_right_nodes.unshift(current)
+            temp_right_nodes.unshift(current.left) if current.left 
+            current = current.left
+          end
+          temp_right_nodes.each do |t|
+            i += 1
+            right_nodes.insert(i,t)
+          end
+        elsif right.right == nil
+          current = right.left
+          temp_right_nodes = [Node.new(right.root,nil,nil)]
+          while current != nil
+            temp_right_nodes.unshift(current.right) if current.right
+            temp_right_nodes.unshift(current)
+            temp_right_nodes.unshift(current.left) if current.left 
+            current = current.left
+          end
+          temp_right_nodes.each do |t|
+            i += 1
+            right_nodes.insert(i,t)
+          end  
+        else
+          current = right.left
+          temp_right_nodes = [Node.new(right.root,nil,nil)]
+          while current != nil
+            temp_right_nodes.unshift(current.right) if current.right
+            temp_right_nodes.unshift(current)
+            temp_right_nodes.unshift(current.left) if current.left 
+            current = current.left
+          end
+          temp_right_nodes.each do |t|
+            i += 1
+            right_nodes.insert(i,t)
+          end
+          current = right.right
+          temp_right_nodes = []
+          while current != nil
+            temp_right_nodes.unshift(current.right) if current.right
+            temp_right_nodes.unshift(current)
+            temp_right_nodes.unshift(current.left) if current.left 
+            current = current.left
+          end
+          temp_right_nodes.each do |t|
+            i += 1
+            right_nodes.insert(i,t)
+          end
+        end
+      end
+      right_roots.each { |r| roots << r }
+      if block_given?
+        roots.each do |data|
+          yield(data)
+        end
+      else
+        return roots 
+      end
+    end
+
+    def preorder
+      if block_given?
+      else
+      end
+    end
+
+    def postorder
+      if block_given?
+      else
+      end
+    end
 end
 
-a = Tree.new([0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250])
+
+arr = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300]
+
+#arr = Array.new(1000000) { rand(1000000) }
+
+a = Tree.new(arr)
 
 a.insert(65)
 a.insert(85)
@@ -239,13 +458,16 @@ found = a.find(80)
 p found
 a.print_tree 
 
-a.delete(60)
-a.print_tree
+#a.delete(60)
+#a.print_tree
 
-a.delete(50)
-a.print_tree
+#a.delete(50)
+#a.print_tree
 
-a.delete(40)
-a.print_tree
+#a.delete(40)
+#a.print_tree
 
-a.level_order { |e| p e*10 }
+
+p "---------------------------"
+
+a.inorder { |e| print "#{e} " }
