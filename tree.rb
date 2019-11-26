@@ -230,7 +230,7 @@ class Tree
       end
     end
 
-    def inorder
+    def inorder_without_recursion
       nodes = []
       current = @root.left
       roots = []
@@ -432,28 +432,155 @@ class Tree
       end
     end
 
-    def preorder
+    def preorder_without_recursion
+      nodes = []
+      roots = [@root.root]
+      current = @root.left
+      while current != nil
+        nodes << current
+        current = current.left
+      end
+      nodes_queue = []
+      nodes.each do |node|
+        if node.root == nil
+          next
+        elsif node.left == nil && node.right == nil
+          roots << node.root if roots.include?(node.root) == false
+        elsif node.left == nil
+          right = node.right
+          roots << node.root if roots.include?(node.root) == false
+          roots << right.root if right.root && roots.include?(right.root) == false
+        elsif node.right == nil
+          left = node.left
+          roots << node.root if roots.include?(node.root) == false
+          roots << left.root if left.root && roots.include?(left.root) == false
+        else
+          roots << node.root if roots.include?(node.root) == false
+          left = node.left
+          roots << left.root if left.root && roots.include?(left.root) == false
+          right = node.right
+          nodes_queue.unshift(right) if right.root != nil
+        end
+      end
+      i = 0
+      nodes_queue.each do |node|
+        if node.nil? || node.root == nil
+          i += 1
+          next
+        end 
+        roots << node.root if roots.include?(node.root) == false
+        current = node 
+        current_rights = []
+        #p node.root
+        #nodes_queue.each {|e| print "#{e.root} " if e.nil? == false}
+        #p "--------------"
+        while current != nil
+          if current.left == nil && current.right == nil
+            current = current.left
+          elsif current.left == nil
+            right = current.right
+            roots << right.root if right.root && roots.include?(right.root) == false
+            current = current.right
+          elsif current.right == nil
+            left = current.left
+            roots << left.root if left.root && roots.include?(left.root) == false
+            current = current.left
+          else
+            left = current.left
+            roots << left.root if left.root && roots.include?(left.root) == false
+            current_rights.unshift(current.right)
+            current = current.left
+          end
+        end
+        if current_rights.length == 1
+          right = current_rights[0]
+          roots << right.root if right.root && roots.include?(right.root) == false
+          i += 1
+          nodes_queue.insert(i,right) 
+          next
+        end
+        current_rights.each do |cr|
+          if nodes_queue.include?(cr) == false
+            i += 1
+            #p i
+            #p cr.root
+            nodes_queue.insert(i,cr) 
+          end
+        end
+        #nodes_queue.each {|e| print "#{e.root} " if e.nil? == false}
+        #p "++++++++++++"
+        i += 1 if current_rights.length == 0
+      end
+      if block_given?
+        roots.each { |data| yield(data) }
+      else
+        return roots
+      end
+    end
+
+    def postorder_without_recursion
       if block_given?
       else
       end
     end
 
-    def postorder
+    def inorder(node=@root,first_call=true)
+      return if node.nil? || node.root == nil 
+      @roots = [] if first_call
+      left = node.left 
+      right = node.right 
+      inorder(left,false) if left && left.root
+      @roots << node
+      inorder(right,false) if right && right.root
+      return node if first_call == false
       if block_given?
+        @roots.each {|i| yield(i.root) if i }  
       else
+        return @roots.map { |i| i.root if i }
+      end  
+    end
+
+    def preorder(node=@root,first_call=true)
+      return if node.nil? || node.root == nil 
+      @roots = [] if first_call
+      @roots << node 
+      left = node.left 
+      right = node.right 
+      preorder(left,false) if left && left.root
+      preorder(right,false) if right && right.root
+      return node if first_call == false
+      if block_given?
+        @roots.each {|i| yield(i.root) if i }  
+      else
+        return @roots.map { |i| i.root if i }
+      end  
+    end
+
+    def postorder(node=@root,first_call=true)
+      return if node.nil? || node.root == nil
+      @roots = [] if first_call
+      left = node.left
+      right = node.right
+      postorder(left,false) if left && left.root
+      postorder(right,false) if right && right.root
+      @roots << node
+      return node if first_call == false
+      if block_given?
+        @roots.each {|i| yield(i.root) if i }  
+      else
+        return @roots.map { |i| i.root if i }
       end
     end
 end
 
 
-arr = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300]
+arr = Array.new(100) { |i| i }
 
 #arr = Array.new(1000000) { rand(1000000) }
 
 a = Tree.new(arr)
 
-a.insert(65)
-a.insert(85)
+
 found = a.find(80)
 p found
 a.print_tree 
@@ -469,5 +596,17 @@ a.print_tree
 
 
 p "---------------------------"
-
-a.inorder { |e| print "#{e} " }
+p "          inorder          "
+a.inorder { |e| print "#{e} " } 
+p "\n"
+p "---------------------------"
+p "---------------------------"
+p "          preorder         "
+a.preorder { |e| print "#{e} " }
+p "\n"
+p "---------------------------"
+p "---------------------------"
+p "          postorder         "
+a.postorder { |e| print "#{e} " }
+p "\n"
+p "---------------------------"
