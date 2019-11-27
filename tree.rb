@@ -602,7 +602,7 @@ class Tree
       while @roots[-1].all? {|i| i == "x"}
         @roots.pop
       end
-      return @roots.length
+      return @roots.length - 1
     end
 
     def balanced?
