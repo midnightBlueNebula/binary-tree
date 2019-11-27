@@ -16,10 +16,7 @@ class Tree
 
     private
 
-    def tree_reset
-    end
-
-    def branch_template(roots=@root,first_call=true)
+    def branch_template(roots=[@root],first_call=true)
         @roots = [] if first_call
         return if roots == []
         row = []
@@ -542,10 +539,10 @@ class Tree
 
     def preorder(node=@root,first_call=true)
       return if node.nil? || node.root == nil 
-      @roots = [] if first_call
-      @roots << node 
+      @roots = [] if first_call 
       left = node.left 
       right = node.right 
+      @roots << node
       preorder(left,false) if left && left.root
       preorder(right,false) if right && right.root
       return node if first_call == false
@@ -571,10 +568,71 @@ class Tree
         return @roots.map { |i| i.root if i }
       end
     end
+
+    def define_method(method,node=@root,first_call=true)
+      return if node.nil? || node.root == nil
+      @roots = [] if first_call
+      left = node.left
+      right = node.right
+      if method == "inorder"
+        define_method("inorder",left,false) if left && left.root
+        @roots << node
+        define_method("inorder",right,false) if right && right.root
+      elsif method == "preorder"
+        @roots << node
+        define_method("preorder",left,false) if left && left.root
+        define_method("preorder",right,false) if right && right.root
+      elsif method == "postorder"
+        define_method("postorder",left,false) if left && left.root
+        define_method("postorder",right,false) if right && right.root
+        @roots << node
+      end
+      return node if first_call == false
+      if block_given?
+        @roots.each {|i| yield(i.root) if i }  
+      else
+        return @roots.map { |i| i.root if i }
+      end
+    end
+
+    def depth(node=@root)
+      @roots = []
+      node = find(node) if node != @root
+      branch_template([node])
+      while @roots[-1].all? {|i| i == "x"}
+        @roots.pop
+      end
+      return @roots.length
+    end
+
+    def balanced?
+      left = @root.left
+      right = @root.right
+      left_depth = depth(left.root)
+      right_depth = depth(right.root)
+      diff = left_depth > right_depth ? left_depth - right_depth : right_depth - left_depth
+      return diff > 1 ? false : true
+    end
+
+    def rebalance!
+      if balanced?
+        p "Binary tree already balanced"
+      else
+        p "Rebalancing binary tree..."
+        arr = []
+        level_order { |e| arr << e }
+        data = Node.new
+        @root = data.build_tree(arr)
+        p "Binary tree rebalanced"
+        print_tree
+      end
+    end
 end
 
 
-arr = Array.new(100) { |i| i }
+#arr = Array.new(100) { |i| i }
+
+arr = Array.new(26) { |i| i*10 }
 
 #arr = Array.new(1000000) { rand(1000000) }
 
@@ -594,19 +652,35 @@ a.print_tree
 #a.delete(40)
 #a.print_tree
 
+a.insert(65)
+a.insert(67)
+a.insert(64)
+a.insert(32)
+a.insert(15)
+a.insert(11)
+a.print_tree
 
+p "---------------------------"
+p "        level_order        "
+a.level_order { |e| print "#{e} " } 
+p "\n"
 p "---------------------------"
 p "          inorder          "
 a.inorder { |e| print "#{e} " } 
 p "\n"
 p "---------------------------"
-p "---------------------------"
 p "          preorder         "
 a.preorder { |e| print "#{e} " }
 p "\n"
 p "---------------------------"
-p "---------------------------"
-p "          postorder         "
+p "          postorder        "
 a.postorder { |e| print "#{e} " }
 p "\n"
 p "---------------------------"
+p "        define_method      "
+a.define_method("postorder") { |e| print "#{e} " }
+p "\n"
+p "---------------------------"
+p a.depth(10)
+p a.balanced?
+a.rebalance!
