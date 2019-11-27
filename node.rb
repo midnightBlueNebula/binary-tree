@@ -14,15 +14,11 @@ class Node
       num = $roots[num] if num != nil
       num = num[0] if num != nil
       min_root = num if num != nil
-      #p num
     end
-    #p "min_root: #{min_root}"
     if min_root != arr[0]
       $roots[min_root] = [arr[0],nil] 
       min_root = $roots[min_root]
       min_root = min_root[0]
-      #p "new min_root: #{min_root}"
-      #p $roots
     end
   end
 
@@ -46,21 +42,17 @@ class Node
       root = arr[arr.length/2]
       find_roots(arr)
       complete_roots(root,arr)
-      #self.root = root
-      #self.left = build_tree(nil,false,$roots[root][0])
-      #self.right = build_tree(nil,false,$roots[root][1])
     elsif arr.kind_of?(Array) == false && first_call
       p "Error: Argument should be an Array"
       return
     end
     if root.nil? == false && $roots[root] != nil 
       root = Node.new(root,$roots[root][0],$roots[root][1])
-      #p root
       root.left = build_tree(nil,false,root.left)
       root.right = build_tree(nil,false,root.right)
       return root
     elsif root.nil? == false && $roots[root] == nil 
-      return Node.new(root,nil,nil) #return root
+      return Node.new(root,nil,nil)
     end
   end
 end
