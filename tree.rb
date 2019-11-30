@@ -515,12 +515,6 @@ class Tree
       end
     end
 
-    def postorder_without_recursion
-      if block_given?
-      else
-      end
-    end
-
     def inorder(node=@root,first_call=true)
       return if node.nil? || node.root == nil 
       @roots = [] if first_call
@@ -602,7 +596,7 @@ class Tree
       while @roots[-1].all? {|i| i == "x"}
         @roots.pop
       end
-      return @roots.length
+      return @roots.length - 1
     end
 
     def balanced?
