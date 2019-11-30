@@ -569,22 +569,22 @@ class Tree
       end
     end
 
-    def define_method(method,node=@root,first_call=true)
+    def choose_order(order,node=@root,first_call=true)
       return if node.nil? || node.root == nil
       @roots = [] if first_call
       left = node.left
       right = node.right
-      if method == "inorder"
-        define_method("inorder",left,false) if left && left.root
+      if order == "inorder"
+        choose_order("inorder",left,false) if left && left.root
         @roots << node
-        define_method("inorder",right,false) if right && right.root
-      elsif method == "preorder"
+        choose_order("inorder",right,false) if right && right.root
+      elsif order == "preorder"
         @roots << node
-        define_method("preorder",left,false) if left && left.root
-        define_method("preorder",right,false) if right && right.root
-      elsif method == "postorder"
-        define_method("postorder",left,false) if left && left.root
-        define_method("postorder",right,false) if right && right.root
+        choose_order("preorder",left,false) if left && left.root
+        choose_order("preorder",right,false) if right && right.root
+      elsif order == "postorder"
+        choose_order("postorder",left,false) if left && left.root
+        choose_order("postorder",right,false) if right && right.root
         @roots << node
       end
       return node if first_call == false
@@ -602,7 +602,7 @@ class Tree
       while @roots[-1].all? {|i| i == "x"}
         @roots.pop
       end
-      return @roots.length - 1
+      return @roots.length
     end
 
     def balanced?
@@ -677,10 +677,12 @@ p "          postorder        "
 a.postorder { |e| print "#{e} " }
 p "\n"
 p "---------------------------"
-p "        define_method      "
-a.define_method("postorder") { |e| print "#{e} " }
+p "        choose_order      "
+a.choose_order("postorder") { |e| print "#{e} " }
 p "\n"
 p "---------------------------"
 p a.depth(10)
 p a.balanced?
 a.rebalance!
+p a.depth(10)
+p a.balanced?
